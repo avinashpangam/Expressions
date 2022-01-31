@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Video stream Sandbox</title>
+    <meta charset="UTF-8" />
+  </head>
+
+  <body>
+    <button id="btntoggle" onclick="cameraonoff()">On</button>
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <script>
+      var videoElem = document.getElementById("video");
+      var btnElm = document.getElementById("btntoggle");
+      var isPlaying = !!videoElem.srcObject;
+      function cameraonoff() {
+        if (!isPlaying) {
+          cameraon();
+        } else {
+          cameraoff();
+        }
+      }
+
+      function cameraon() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices
+            .getUserMedia({
+              video: true
+            })
+            .then(function (stream) {
+              videoElem.srcObject = stream;
+              videoElem.play();
+            })
+            .then(() => {
+              isPlaying = true;
+              btnElm.innerText = "Off";
+            });
+        }
+      }
+
+      function cameraoff() {
+        const stream = videoElem.srcObject;
+        if (stream) {
+          const tracks = stream.getTracks();
+
+          tracks.forEach(function (track) {
+            track.stop();
+          });
+
+          videoElem.srcObject = null;
+          isPlaying = false;
+          btnElm.innerText = "On";
+        }
+      }
+    </script>
+  </body>
+</html>
